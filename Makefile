@@ -2,7 +2,7 @@
 # see http://mbed.org/handbook/Exporting-to-GCC-ARM-Embedded
 
 DEBUG = 1
-GCC_BIN = /home/varun/projs/gcc-arm/bin/
+GCC_BIN = ${which arm-none-eabi-gcc | xargs dirname}
 PROJECT = TalkSerial
 OBJECTS = ./TalkSerial.o 
 SYS_OBJECTS = ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/cmsis_nvic.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/system_LPC17xx.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/board.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/retarget.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/startup_LPC17xx.o 
@@ -44,6 +44,9 @@ clean:
 	$(CC)  $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu99   $(INCLUDE_PATHS) -o $@ $<
 
 .cpp.o:
+	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu++98 $(INCLUDE_PATHS) -o $@ $<
+
+.cc.o:
 	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu++98 $(INCLUDE_PATHS) -o $@ $<
 
 

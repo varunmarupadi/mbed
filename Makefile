@@ -4,6 +4,7 @@
 DEBUG = 1
 GCC_BIN = ${which arm-none-eabi-gcc | xargs dirname}
 PROJECT = TalkSerial
+PROJECTS = TalkSerial gray minimal_flash
 OBJECTS = ./TalkSerial.o 
 SYS_OBJECTS = ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/cmsis_nvic.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/system_LPC17xx.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/board.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/retarget.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/startup_LPC17xx.o 
 INCLUDE_PATHS = -I. -I./mbed -I./mbed/TARGET_LPC1768 -I./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM -I./mbed/TARGET_LPC1768/TARGET_NXP -I./mbed/TARGET_LPC1768/TARGET_NXP/TARGET_LPC176X -I./mbed/TARGET_LPC1768/TARGET_NXP/TARGET_LPC176X/TARGET_MBED_LPC1768 
@@ -34,6 +35,8 @@ endif
 
 all: $(PROJECT).bin
 
+test_all: $(addsuffix .bin, $(PROJECTS))
+
 clean:
 	rm -f *.bin *.elf *.o $(DEPS)
 
@@ -52,6 +55,12 @@ clean:
 
 $(PROJECT).elf: $(OBJECTS) $(SYS_OBJECTS)
 	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
+
+.o.bin: $(SYS_OBJECTS)
+	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
+
+.elf.bin:
+	$(OBJCOPY) -O binary $< $@
 
 $(PROJECT).bin: $(PROJECT).elf
 	$(OBJCOPY) -O binary $< $@

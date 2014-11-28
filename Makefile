@@ -56,12 +56,6 @@ clean:
 $(PROJECT).elf: $(OBJECTS) $(SYS_OBJECTS)
 	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
 
-.o.bin: $(SYS_OBJECTS)
-	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
-
-.elf.bin:
-	$(OBJCOPY) -O binary $< $@
-
 $(PROJECT).bin: $(PROJECT).elf
 	$(OBJCOPY) -O binary $< $@
 
@@ -69,6 +63,12 @@ minimal_flash.elf: $(SYS_OBJECTS) minimal_flash.o
 	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
 
 minimal_flash.bin: minimal_flash.elf
+	$(OBJCOPY) -O binary $< $@
+
+%.elf: %.o $(SYS_OBJECTS)
+	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
+
+%.bin: %.elf
 	$(OBJCOPY) -O binary $< $@
 
 DEPS = $(OBJECTS:.o=.d) $(SYS_OBJECTS:.o=.d)

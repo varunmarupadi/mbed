@@ -3,7 +3,6 @@
 
 DEBUG = 1
 GCC_BIN = ${which arm-none-eabi-gcc | xargs dirname}
-PROJECT = TalkSerial
 PROJECTS = TalkSerial gray minimal_flash
 OBJECTS = ./TalkSerial.o 
 SYS_OBJECTS = ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/cmsis_nvic.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/system_LPC17xx.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/board.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/retarget.o ./mbed/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/startup_LPC17xx.o 
@@ -33,9 +32,7 @@ else
   CC_FLAGS += -DNDEBUG -Os
 endif
 
-all: $(PROJECT).bin
-
-test_all: $(addsuffix .bin, $(PROJECTS))
+all: $(addsuffix .bin, $(PROJECTS))
 
 clean:
 	rm -f *.bin *.elf *.o $(DEPS)
@@ -52,18 +49,6 @@ clean:
 .cc.o:
 	$(CPP) $(CC_FLAGS) $(CC_SYMBOLS) -std=gnu++98 $(INCLUDE_PATHS) -o $@ $<
 
-
-$(PROJECT).elf: $(OBJECTS) $(SYS_OBJECTS)
-	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
-
-$(PROJECT).bin: $(PROJECT).elf
-	$(OBJCOPY) -O binary $< $@
-
-minimal_flash.elf: $(SYS_OBJECTS) minimal_flash.o
-	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)
-
-minimal_flash.bin: minimal_flash.elf
-	$(OBJCOPY) -O binary $< $@
 
 %.elf: %.o $(SYS_OBJECTS)
 	$(LD) $(LD_FLAGS) -T$(LINKER_SCRIPT) $(LIBRARY_PATHS) -o $@ $^ $(LIBRARIES) $(LD_SYS_LIBS) $(LIBRARIES) $(LD_SYS_LIBS)

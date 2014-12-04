@@ -11,6 +11,8 @@ int main() {
   unsigned int* mode_register = (unsigned int*)0x4002c04c;
   *mode_register &= ~(0x3 << 4);
   *mode_register |= (0x2 << 4);
+  unsigned int* function_register = (unsigned int*)0x4002c00c; // LED1
+  *function_register &= ~(0x3 << 4);
   pc.printf("START!!!!\r\n");
   const unsigned int mask = 0x40000; // LED1
   unsigned int* reg_set = (unsigned int*)0x2009c038;
